@@ -1,6 +1,8 @@
 declare const p5;
 
 new p5(p => {
+  const GENERATION_DURATION = 1000;
+  const TRANSITION_FRACTION = 0.25;
   const ROWS = 18;
   const COLS = 11;
   const grid = new Grid(ROWS, COLS);
@@ -24,6 +26,7 @@ new p5(p => {
     "           ",
     "           ",
   ];
+  let currentGenerationTime = p.millis();
   start.forEach((row: string, iRow) => {
     for (let iCol = 0; iCol < COLS; ++iCol) {
       grid.set(iRow, iCol, row[iCol] !== ' ');
@@ -35,7 +38,6 @@ new p5(p => {
   };
 
   p.draw = () => {
-    p.frameRate(2);
     const topMargin = 100;
     const leftMargin = 50;
     p.background('white');
@@ -47,9 +49,14 @@ new p5(p => {
     const fills = [[0, 0, 255, 150], [240, 240, 240, 255]];
     const strokes = ['black', 'lightgray'];
 
+    const generationElapsedTime = p.millis() - currentGenerationTime;
+    const TRANSITION_DURATION = GENERATION_DURATION * TRANSITION_FRACTION;
+    const transitionProgress = p.map(p.min(generationElapsedTime,
+        TRANSITION_DURATION), 0, TRANSITION_DURATION, 0, 1);
+
     for (let row = 0; row < ROWS; ++row) {
       for (let col = 0; col < COLS; ++col) {
-        const alive = grid.get(row, col);
+        const alive = grid.get(row, col)[0];
         const aliveIndex = alive ? 0 : 1;
         const stroke = strokes[aliveIndex];
         if (stroke) p.stroke(stroke); else p.noStroke();
@@ -57,11 +64,15 @@ new p5(p => {
         p.push();
         p.translate(leftMargin + col * cellSize, topMargin + row * cellSize, 0);
         const s = cellSize * 0.8;
-        p.box(s, s, alive ? s / 3 : 0);
+        const maxAliveCellHeight = s / 3;
+        p.box(s, s, alive ? maxAliveCellHeight : 0);
         p.pop();
       }
     }
-    grid.advance();
+    if (p.millis() > currentGenerationTime + GENERATION_DURATION) {
+      grid.advance();
+      currentGenerationTime += GENERATION_DURATION;
+    }
   };
 
 });
