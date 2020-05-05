@@ -5,6 +5,11 @@ new p5(p => {
   const TRANSITION_FRACTION = 0.5;
   const ROWS = 18;
   const COLS = 14;
+  const topMargin = 0;
+  const leftMargin = 0;
+  let cellHeight;
+  let cellWidth;
+  let cellSize;
   const grid = new Grid(ROWS, COLS);
   const start = [
     "              ",
@@ -35,15 +40,14 @@ new p5(p => {
 
   p.setup = () => {
     p.createCanvas(p.windowWidth - 10, p.windowHeight - 50, p.WEBGL);
+    cellHeight = (p.height - topMargin) / ROWS;
+    cellWidth = (p.width - leftMargin) / COLS;
+    cellSize = p.min(cellHeight, cellWidth);
   };
 
   p.draw = () => {
     p.background('white');
-    p.rotateX(p.TAU / 8);
-    p.translate(-p.width / 4, -p.height / 3);
-    const cellHeight = (p.height - 50) / ROWS;
-    const cellWidth = (p.width - 0) / COLS;
-    const cellSize = p.min(cellHeight, cellWidth);
+    // p.rotateX(p.TAU / 8);
     const strokes = ['black', 'lightgray'];
 
     const generationElapsedTime = p.millis() - currentGenerationTime;
@@ -77,5 +81,12 @@ new p5(p => {
       currentGenerationTime += GENERATION_DURATION;
     }
   };
+
+  p.mouseClicked = () => {
+    const mx = p.mouseX - p.width / 2
+    const my = p.mouseY - p.height / 2
+    const rowIndex = Math.floor((my + cellSize / 2) / cellSize)
+    const colIndex = Math.floor((mx + cellSize / 2) / cellSize)
+  }
 
 });
