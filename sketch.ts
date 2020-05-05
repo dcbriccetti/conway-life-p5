@@ -46,7 +46,6 @@ new p5(p => {
     const cellHeight = (p.height - topMargin) / ROWS;
     const cellWidth = (p.width - leftMargin) / COLS;
     const cellSize = p.min(cellHeight, cellWidth);
-    const fills = [[0, 0, 255, 150], [240, 240, 240, 255]];
     const strokes = ['black', 'lightgray'];
 
     const generationElapsedTime = p.millis() - currentGenerationTime;
@@ -61,15 +60,17 @@ new p5(p => {
         const prevAlive = pa === null ? alive : pa;
         const aliveIndex = alive ? 0 : 1;
         const stroke = strokes[aliveIndex];
+        const transitionType = alive ? transitionProgress : 1 - transitionProgress;
+        const cellFillSize = cellSize * 0.8;
+        const maxAliveCellHeight = cellFillSize / 3;
+        const cellHeight = alive || prevAlive ?
+            maxAliveCellHeight * (alive === prevAlive ? 1 : transitionType) : 0;
+        const opacity = p.map(cellHeight, 0, maxAliveCellHeight, 0, 150);
         if (stroke) p.stroke(stroke); else p.noStroke();
-        p.fill(...fills[aliveIndex]);
+        p.fill(0, 0, 255, opacity);
         p.push();
         p.translate(leftMargin + col * cellSize, topMargin + row * cellSize, 0);
-        const s = cellSize * 0.8;
-        const maxAliveCellHeight = s / 3;
-        p.box(s, s, alive || prevAlive ?
-          maxAliveCellHeight * (alive === prevAlive ? 1 : transitionProgress) :
-          0);
+        p.box(cellFillSize, cellFillSize, cellHeight);
         p.pop();
       }
     }
