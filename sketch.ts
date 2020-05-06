@@ -2,29 +2,29 @@ declare const p5;
 
 new p5(p => {
   const GENERATION_DURATION = 1000;
-  const TRANSITION_FRACTION = 0.25;
+  const TRANSITION_FRACTION = 0.5;
   const ROWS = 18;
-  const COLS = 11;
+  const COLS = 14;
   const grid = new Grid(ROWS, COLS);
   const start = [
-    "           ",
-    "           ",
-    "           ",
-    "    xxx    ",
-    "     x     ",
-    "     x     ",
-    "    xxx    ",
-    "           ",
-    "    xxx    ",
-    "    xxx    ",
-    "           ",
-    "    xxx    ",
-    "     x     ",
-    "     x     ",
-    "    xxx    ",
-    "           ",
-    "           ",
-    "           ",
+    "              ",
+    "              ",
+    "              ",
+    "    xxx       ",
+    "     x        ",
+    "     x        ",
+    "    xxx       ",
+    "              ",
+    "    xxx       ",
+    "    xxx       ",
+    "              ",
+    "    xxx       ",
+    "     x        ",
+    "     x        ",
+    "    xxx       ",
+    "            X ",
+    "            X ",
+    "            X ",
   ];
   let currentGenerationTime = p.millis();
   start.forEach((row: string, iRow) => {
@@ -38,13 +38,11 @@ new p5(p => {
   };
 
   p.draw = () => {
-    const topMargin = 100;
-    const leftMargin = 50;
     p.background('white');
     p.rotateX(p.TAU / 8);
-    p.translate(-p.width / 2, -p.height / 2);
-    const cellHeight = (p.height - topMargin) / ROWS;
-    const cellWidth = (p.width - leftMargin) / COLS;
+    p.translate(-p.width / 4, -p.height / 3);
+    const cellHeight = (p.height - 50) / ROWS;
+    const cellWidth = (p.width - 0) / COLS;
     const cellSize = p.min(cellHeight, cellWidth);
     const strokes = ['black', 'lightgray'];
 
@@ -69,7 +67,7 @@ new p5(p => {
         if (stroke) p.stroke(stroke); else p.noStroke();
         p.fill(0, 0, 255, opacity);
         p.push();
-        p.translate(leftMargin + col * cellSize, topMargin + row * cellSize, 0);
+        p.translate(col * cellSize, -300 + row * cellSize, 0);
         p.box(cellFillSize, cellFillSize, cellHeight);
         p.pop();
       }
